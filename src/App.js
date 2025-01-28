@@ -3,7 +3,6 @@ import React, { createContext, useState } from 'react';
 
 export const MyContext = createContext();
 
-
 function App() {
   
   const [ tasks, setTasks] = useState([])
@@ -13,7 +12,6 @@ function App() {
   const [ selectedFilter, setSelectedFilter ] = useState("all-tasks");
   const [ nextId, setNextId ] = useState(1);
   const [ error, setError ] = useState("");
-
 
   return (
     <>  

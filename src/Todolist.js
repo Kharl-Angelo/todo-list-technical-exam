@@ -6,7 +6,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
 const Todolist = () => {
-
   const { 
     tasks, 
     setTasks, 
@@ -25,6 +24,7 @@ const Todolist = () => {
   } = useContext(MyContext);
 
   // handling to add newTask in "tasks" array of objects. updating the "tasks" array by spread method to update based on the last state/status of a "tasks" array
+  
   const handleAddTask = ()=> {
     if (newTask.trim() !== "") {
       setTasks((prevTasks) =>  [...prevTasks, {id: nextId, taskName: newTask, completed: false, isChanging: false },]);
@@ -69,22 +69,7 @@ const Todolist = () => {
     setIsUpdating(null)
   }
 
-  // to handle the filter features, we will first get first what we want to filter by using "select" and "option" attribute then assigning each value of what we want to filter. In filteredTask() function, we will filter by determining if the task.completed is true or false for the "active-tasks" and "completed-tasks", if "all-tasks" is selected then we will return true to display all tasks in an array, other return false;
-
-  /*
-  const filteredTasks = tasks.filter((task) => {
-      if (selectedFilter === "all-tasks") {
-        return true;
-      } else if (selectedFilter === "active-tasks") {
-        return !task.completed
-      } else if (selectedFilter === "completed-tasks") {
-        return task.completed
-      } else {
-        return false;
-      }
-    }
-  ); 
-  */
+  // using .useEffect, for filtering the tasks. We will run the .useEffect when the state of "tasks" and "selectedFitler" changes. The function inside the .useEffect is that it filtered through each "task" of "tasks" array then identfying the status whether the "completed" property has a value of true or false, then filtering it and assigned the filtered value to the "updatedTask" which was initially an empty array then setting the "filteredTasks" based on the value of "updatedTask"
 
   const [ filteredTasks, setFilteredTasks] = useState([]);
 
@@ -104,7 +89,6 @@ const Todolist = () => {
     };
     filterTask();
   }, [tasks, selectedFilter])
-
 
   return (
     <div className="main-container">
