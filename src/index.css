@@ -35,13 +35,21 @@ code {
 }
 
 .to-inputs {
-  padding-bottom: 1em;
+  margin-bottom: 1em;
   display: flex;
   column-gap: 1em;
   justify-content: space-evenly;
 }
+
+.sub1-to-inputs {
+  flex: 1;
+  height: 100%;
+}
+
 .sub-to-inputs {
   display: flex;
+  margin-right: 0.2rem;
+  height: 100%;
 }
 
 .task-container {

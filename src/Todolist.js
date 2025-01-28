@@ -1,5 +1,5 @@
 
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { MyContext } from './App';
 import { Button, Checkbox, TextField, Select, MenuItem} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -71,6 +71,7 @@ const Todolist = () => {
 
   // to handle the filter features, we will first get first what we want to filter by using "select" and "option" attribute then assigning each value of what we want to filter. In filteredTask() function, we will filter by determining if the task.completed is true or false for the "active-tasks" and "completed-tasks", if "all-tasks" is selected then we will return true to display all tasks in an array, other return false;
 
+  /*
   const filteredTasks = tasks.filter((task) => {
       if (selectedFilter === "all-tasks") {
         return true;
@@ -83,6 +84,27 @@ const Todolist = () => {
       }
     }
   ); 
+  */
+
+  const [ filteredTasks, setFilteredTasks] = useState([]);
+
+  useEffect(() => {
+    const filterTask = () => {
+      let updatedTask = [];
+        if (selectedFilter === "all-tasks") {
+          updatedTask = tasks;
+        } else if (selectedFilter === "active-tasks") {
+          updatedTask = tasks.filter((task) => !task.completed)
+        } else if (selectedFilter === "completed-tasks") {
+          updatedTask = tasks.filter((task) => task.completed)
+        } else {
+          return false;
+        }
+        setFilteredTasks(updatedTask);
+    };
+    filterTask();
+  }, [tasks, selectedFilter])
+
 
   return (
     <div className="main-container">
@@ -90,7 +112,7 @@ const Todolist = () => {
       <h1 className='title-todolist'> Todo-List </h1>
 
       <div className='to-inputs'>
-
+        <div className='sub1-to-inputs'>
         <TextField 
           type="text" 
           variant="filled"
@@ -102,12 +124,13 @@ const Todolist = () => {
           error={!!error}
           helperText={error}
         />
+        </div>
         <div className='sub-to-inputs'>
         <Button 
           sx={{
             backgroundColor: "#ece8dc;",
             color: "black",
-            fontWeight: "bold"
+            fontWeight: "bold",
           }}
           variant='contained'
           onClick={handleAddTask}>

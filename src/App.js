@@ -31,7 +31,8 @@ function App() {
                                     nextId, 
                                     setNextId,
                                     error,
-                                    setError}}>
+                                    setError,
+                                    }}>
           <TodoList/>
         </MyContext.Provider>
     </>
