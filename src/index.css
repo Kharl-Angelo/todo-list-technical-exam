@@ -1,0 +1,129 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.main-container {
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  align-items: center;
+}
+
+.sub-main-container {
+  border-radius: 10px;
+  padding: 1em;
+  background-color: #FAF7F0;
+  flex: 1;
+  margin: 0 4em;
+}  
+
+.title-todolist {
+  text-align: center;
+  margin-bottom: 0.5em;
+  margin-top: 0;
+  font-style: oblique;
+}
+
+.to-inputs {
+  padding-bottom: 1em;
+  display: flex;
+  column-gap: 1em;
+  justify-content: space-evenly;
+}
+.sub-to-inputs {
+  display: flex;
+}
+
+.task-container {
+  margin-bottom: 0.5em;
+  border-radius: 10px;
+  transition: 0.5s;
+}
+
+.main-task-container {
+  justify-content: space-between;
+}
+
+.first-task-container {
+  display: flex;
+  flex: 1;
+}
+
+.second-task-container {
+  display: flex;
+}
+
+.updating-container {
+  padding: 0.8rem 1.5rem 0.8rem 2rem;
+}
+
+.task-name {
+  width: 10rem;
+  font-size: 1.1em;
+  flex: 1;
+}
+
+.delete-btn {
+  margin-right: 1em;
+}
+
+.main-task-container {
+  display: flex;
+}
+
+.first-updating-container {
+  flex: 1;
+  display: flex;
+}
+
+.second-updating-container {
+  display: flex;
+}
+
+@media  (max-width: 560px) {
+  .to-inputs {
+    flex-direction: column
+  }
+  .sub-to-inputs {
+    margin-top: 0.8em;
+    justify-content: space-evenly;
+  }
+  .main-task-container {
+    flex-direction: column;
+  }
+  .second-task-container {
+    margin-bottom: 0.7rem;
+    justify-content: space-around;
+  }
+  .updating-container {
+    flex-direction: column;
+    padding: 0.7rem 1rem 0.7rem;
+  }
+  .second-updating-container {
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (min-width: 561px) {
+  .first-updating-container {
+    margin-right: 2.1rem
+  }
+  .second-task-container {
+    height: 2.5rem;
+    justify-content: center;
+  }
+  .main-task-container {
+    align-items: center;
+  }
+}
