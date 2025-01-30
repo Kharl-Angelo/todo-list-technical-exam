@@ -1,53 +1,66 @@
-
-import React, { useContext, useEffect, useState } from 'react'
-import { MyContext } from './App';
-import { Button, Checkbox, TextField, Select, MenuItem} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import React, { useContext, useEffect, useState } from "react";
+import { MyContext } from "./App";
+import {
+  Button,
+  Checkbox,
+  TextField,
+  Select,
+  MenuItem,
+  useTheme,
+  Container,
+  Typography,
+  Stack,
+} from "@mui/material";
+import { Delete as DeleteIcon, Edit as EditIcon } from "@mui/icons-material";
+import { RootBox } from "./cuztomizedStyle";
 
 const Todolist = () => {
-  const { 
-    tasks, 
-    setTasks, 
-    newTask, 
-    setNewTask, 
-    isUpdating, 
-    setIsUpdating, 
-    newUpdatedTask, 
-    setNewUpdatedTask, 
-    selectedFilter, 
-    setSelectedFilter, 
-    nextId, 
+  const contentTheme = useTheme();
+  console.log(contentTheme);
+
+  const {
+    tasks,
+    setTasks,
+    newTask,
+    setNewTask,
+    isUpdating,
+    setIsUpdating,
+    newUpdatedTask,
+    setNewUpdatedTask,
+    selectedFilter,
+    setSelectedFilter,
+    nextId,
     setNextId,
     error,
     setError,
   } = useContext(MyContext);
 
   // handling to add newTask in "tasks" array of objects. updating the "tasks" array by spread method to update based on the last state/status of a "tasks" array
-  
-  const handleAddTask = ()=> {
+
+  const handleAddTask = () => {
     if (newTask.trim() !== "") {
-      setTasks((prevTasks) =>  [...prevTasks, {id: nextId, taskName: newTask, completed: false, isChanging: false },]);
-      setNextId((prevId) => prevId + 1)
-      setError("")
+      setTasks((prevTasks) => [
+        ...prevTasks,
+        { id: nextId, taskName: newTask, completed: false, isChanging: false },
+      ]);
+      setNextId((prevId) => prevId + 1);
+      setError("");
     } else {
-      setError("Please enter proper task!")
+      setError("Please enter proper task!");
     }
     setNewTask("");
-  }
+  };
 
   // handle deleting by using filtering method, then set the "tasks" to the filtered one
   const handleDelete = (id) => {
-    const updatedTask = tasks.filter((task) => 
-      task.id !== id
-    )
+    const updatedTask = tasks.filter((task) => task.id !== id);
     setTasks(updatedTask);
-  }
+  };
 
   // updating check box by inverting or setting the "completed:" property to the opposite value from the prev state
   const handleCheckBox = (id) => {
     setTasks((prevTasks) =>
-      prevTasks.map((task) => 
+      prevTasks.map((task) =>
         task.id === id ? { ...task, completed: !task.completed } : task
       )
     );
@@ -55,176 +68,235 @@ const Todolist = () => {
 
   // updating taskname, the "isUpdating" variable is to determine whether we are updating or not, if so, we will display the input attribute that initially displaying "none", otherwise it will remain false to display at "none"
   const handleUpdate = (id, name) => {
-    setIsUpdating(id === isUpdating ? null : id)
+    setIsUpdating(id === isUpdating ? null : id);
     setNewUpdatedTask(name);
-  }
+  };
 
   //handling confirm button. once the "Update" button is clicked when in updating status we will get the value of "newUpdatedTask" then assigning it as a new taskName for specific task.
   const handleConfirmUpdate = (id) => {
-    setTasks((prevTasks) => 
-      prevTasks.map((task) => 
-        task.id === id ? {...task, taskName: newUpdatedTask }: task
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === id ? { ...task, taskName: newUpdatedTask } : task
       )
-    )
-    setIsUpdating(null)
-  }
+    );
+    setIsUpdating(null);
+  };
 
   // using .useEffect, for filtering the tasks. We will run the .useEffect when the state of "tasks" and "selectedFitler" changes. The function inside the .useEffect is that it filtered through each "task" of "tasks" array then identfying the status whether the "completed" property has a value of true or false, then filtering it and assigned the filtered value to the "updatedTask" which was initially an empty array then setting the "filteredTasks" based on the value of "updatedTask"
 
-  const [ filteredTasks, setFilteredTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
 
   useEffect(() => {
     const filterTask = () => {
       let updatedTask = [];
-        if (selectedFilter === "all-tasks") {
-          updatedTask = tasks;
-        } else if (selectedFilter === "active-tasks") {
-          updatedTask = tasks.filter((task) => !task.completed)
-        } else if (selectedFilter === "completed-tasks") {
-          updatedTask = tasks.filter((task) => task.completed)
-        } else {
-          return false;
-        }
-        setFilteredTasks(updatedTask);
+      if (selectedFilter === "all-tasks") {
+        updatedTask = tasks;
+      } else if (selectedFilter === "active-tasks") {
+        updatedTask = tasks.filter((task) => !task.completed);
+      } else if (selectedFilter === "completed-tasks") {
+        updatedTask = tasks.filter((task) => task.completed);
+      } else {
+        return false;
+      }
+      setFilteredTasks(updatedTask);
     };
     filterTask();
-  }, [tasks, selectedFilter])
+  }, [tasks, selectedFilter]);
 
   return (
-    <div className="main-container">
-      <div className="sub-main-container">
-      <h1 className='title-todolist'> Todo-List </h1>
+    <RootBox>
+      <Container>
+        <Typography variant="h4" sx={{ fontStyle: "italic" }}>
+          Todo-List
+        </Typography>
 
-      <div className='to-inputs'>
-        <div className='sub1-to-inputs'>
-        <TextField 
-          type="text" 
-          variant="filled"
-          sx={{
-            width: '100%',
-          }}
-          onChange={(e) => setNewTask (e.target.value)} 
-          value={newTask}
-          error={!!error}
-          helperText={error}
-        />
-        </div>
-        <div className='sub-to-inputs'>
-        <Button 
-          sx={{
-            backgroundColor: "#ece8dc;",
-            color: "black",
-            fontWeight: "bold",
-          }}
-          variant='contained'
-          onClick={handleAddTask}>
-            Add Task
-        </Button>
-
-        <Select 
-          value={selectedFilter} 
-          sx={{
-            marginLeft: '1em'
-          }}
-          onChange={(e) => setSelectedFilter (e.target.value)}>
-            <MenuItem value="all-tasks"> All Tasks </MenuItem>
-            <MenuItem value="active-tasks"> Active Tasks </MenuItem>
-            <MenuItem value="completed-tasks"> Completed Tasks </MenuItem>
-        </Select>
-        </div>
-      </div>
-
-      <div className='tasks-container'>
-        {filteredTasks.map((task) => 
-
-          <div 
-            key={task.id} 
-            className='task-container'
-            style={{backgroundColor: task.completed ? "#AEEA94" : "#edebe3"}}
+        <Stack
+          direction={{ sm: "row", xs: "column" }}
+          spacing={{ sm: 2, xs: 1 }}
+          alignItems={{ sm: "center" }}
+          justifyContent={{ sm: "space-between" }}
+          marginBottom="0.7rem"
+        >
+          <TextField
+            type="text"
+            variant="filled"
+            sx={{
+              flex: 1,
+              "& .MuiInputBase-input": {
+                padding: "0.5rem",
+              },
+            }}
+            onChange={(e) => setNewTask(e.target.value)}
+            value={newTask}
+            error={!!error}
+            helperText={error}
+          />
+          <Stack
+            direction="row"
+            spacing={2}
+            justifyContent={{ sm: "space-between", xs: "space-evenly" }}
+            alignItems="center"
+          >
+            <Button
+              size="small"
+              sx={{
+                flex: 1,
+                maxWidth: "6rem",
+                fontWeight: "bold",
+                padding: "0.5rem 0.8rem !important",
+                height: "0",
+              }}
+              color="primary"
+              variant="contained"
+              onClick={handleAddTask}
             >
-              <div 
-                className="main-task-container" 
-                style={{display: isUpdating === task.id ? "none" : "flex"}}>
+              Add Task
+            </Button>
 
-                <div className='first-task-container'>
-                <Checkbox 
-                  sx={{
-                    margin: '0 1rem'
-                  }}
-                  className="checkbox" 
-                  type='checkbox' 
-                  onChange={() => handleCheckBox(task.id)} checked={task.completed}/>
+            <Select
+              sx={{
+                "& .MuiSelect-select": {
+                  padding: "0.5rem 0.8rem",
+                },
+              }}
+              value={selectedFilter}
+              onChange={(e) => setSelectedFilter(e.target.value)}
+            >
+              <MenuItem value="all-tasks"> All Tasks </MenuItem>
+              <MenuItem value="active-tasks"> Active Tasks </MenuItem>
+              <MenuItem value="completed-tasks"> Completed Tasks </MenuItem>
+            </Select>
+          </Stack>
+        </Stack>
 
-                <p 
-                  className='task-name' 
-                  style={{textDecoration: task.completed ? 'line-through' : 'none' }}>
-                  {task.taskName}
-                </p>
-                </div>
-                <div className='second-task-container'>
-                <Button 
-                  sx={{
-                    margin: '0 1rem'
-                  }}
-                  variant='outlined'
-                  color='error'
-                  className='delete-btn' 
-                  startIcon={<DeleteIcon/>}
-                  onClick={() => handleDelete(task.id)}> Delete 
-                </Button>
+        <Stack>
+          {filteredTasks.map((task) => (
+            <Stack
+              key={task.id}
+              marginBottom="0.5rem"
+              borderRadius="10px"
+              sx={{
+                backgroundColor: task.completed ? "#AEEA94" : "#edebe3",
+                transition: "0.5s",
+              }}
+            >
+              <Stack
+                direction={{ sm: "row", xs: "column" }}
+                justifyContent="space-between"
+                display={{ display: isUpdating === task.id ? "none" : "flex" }}
+              >
+                <Stack direction="row" alignItems="center">
+                  <Checkbox
+                    sx={{
+                      margin: "0 0.5rem",
+                    }}
+                    type="checkbox"
+                    onChange={() => handleCheckBox(task.id)}
+                    checked={task.completed}
+                  />
 
-                <Button 
-                  sx={{
-                    marginRight: '1rem'
-                  }}
-                  variant='outlined'
-                  color='success'
-                  className='update-btn' 
-                  startIcon={<EditIcon/>}
-                  onClick={() => handleUpdate(task.id, task.taskName)}> Update 
-                </Button>
-                </div>
-              </div>
+                  <Typography
+                    variant="h6"
+                    textDecoration={task.completed ? "line-through" : "none"}
+                  >
+                    {task.taskName}
+                  </Typography>
+                </Stack>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-evenly"
+                  marginBottom={{ sm: "0rem", xs: "0.5rem" }}
+                >
+                  <Button
+                    size="small"
+                    sx={{
+                      fontWeight: "600",
+                      margin: "0 1rem",
+                      maxWidth: "6.5rem",
+                    }}
+                    variant="outlined"
+                    color="error"
+                    startIcon={<DeleteIcon />}
+                    onClick={() => handleDelete(task.id)}
+                  >
+                    Delete
+                  </Button>
 
-              <div 
-                className="updating-container" 
-                style={{display: isUpdating === task.id ? "flex" : "none"}}>
-                <div className='first-updating-container'>
+                  <Button
+                    size="small"
+                    sx={{
+                      fontWeight: "600",
+                      marginRight: "1rem",
+                      maxWidth: "6.5rem",
+                    }}
+                    variant="outlined"
+                    color="success"
+                    startIcon={<EditIcon />}
+                    onClick={() => handleUpdate(task.id, task.taskName)}
+                  >
+                    Update
+                  </Button>
+                </Stack>
+              </Stack>
+
+              <Stack
+                padding="0.5rem"
+                direction={{
+                  sm: "row",
+                  xs: "column",
+                }}
+                spacing={2}
+                display={isUpdating === task.id ? "flex" : "none"}
+              >
                 <TextField
                   sx={{
-                    width: "100%",
+                    flex: "1",
                   }}
-                  type='text' 
-                  variant='standard'
-                  value={newUpdatedTask} onChange={(e) => setNewUpdatedTask (e.target.value)}
+                  type="text"
+                  variant="standard"
+                  value={newUpdatedTask}
+                  onChange={(e) => setNewUpdatedTask(e.target.value)}
                 />
-                </div>
-                <div className='second-updating-container'>
-                <Button
-                  sx={{
-                    marginRight: "2.1rem"
-                  }}
-                  variant='contained'
-                  color='error'
-                  onClick={() => setIsUpdating (null)}> Cancel 
-                </Button>
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  justifyContent={{ justifyContent: "space-evenly" }}
+                >
+                  <Button
+                    size="small"
+                    sx={{
+                      fontWeight: "600",
+                      maxWidth: "6.5rem",
+                    }}
+                    variant="contained"
+                    color="error"
+                    onClick={() => setIsUpdating(null)}
+                  >
+                    {" "}
+                    Cancel
+                  </Button>
+                  <Button
+                    size="small"
+                    sx={{
+                      fontWeight: "600",
+                      maxWidth: "6.5rem",
+                    }}
+                    variant="contained"
+                    color="success"
+                    onClick={() => handleConfirmUpdate(task.id)}
+                  >
+                    {" "}
+                    Confirm
+                  </Button>
+                </Stack>
+              </Stack>
+            </Stack>
+          ))}
+        </Stack>
+      </Container>
+    </RootBox>
+  );
+};
 
-                <Button 
-                  variant='contained'
-                  color='success'
-                  onClick={() => handleConfirmUpdate(task.id)}> Confirm 
-                </Button>
-                </div>
-              </div>
-
-          </div>
-
-        )}
-
-      </div>
-      </div>
-    </div>
-  )
-}
-
-export default Todolist
+export default Todolist;
