@@ -11,6 +11,7 @@ function App() {
   const [selectedFilter, setSelectedFilter] = useState("all-tasks");
   const [nextId, setNextId] = useState(1);
   const [error, setError] = useState("");
+  const [filteredTasks, setFilteredTasks] = useState([]);
 
   return (
     <>
@@ -30,6 +31,8 @@ function App() {
           setNextId,
           error,
           setError,
+          filteredTasks,
+          setFilteredTasks,
         }}
       >
         <TodoList />

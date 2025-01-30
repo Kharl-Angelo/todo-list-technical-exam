@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { MyContext } from "./App";
 import {
   Button,
@@ -13,6 +13,10 @@ import {
 } from "@mui/material";
 import { Delete as DeleteIcon, Edit as EditIcon } from "@mui/icons-material";
 import { RootBox } from "./cuztomizedStyle";
+import { handleAddTask } from "./actions/handleAddTask";
+import { handleDelete } from "./actions/handleDelete";
+import { handleUpdate, handleConfirmUpdate } from "./actions/handleUpdates";
+import { handleCheckBox } from "./utils/handleCheckBox";
 
 const Todolist = () => {
   const contentTheme = useTheme();
@@ -33,58 +37,9 @@ const Todolist = () => {
     setNextId,
     error,
     setError,
+    filteredTasks,
+    setFilteredTasks,
   } = useContext(MyContext);
-
-  // handling to add newTask in "tasks" array of objects. updating the "tasks" array by spread method to update based on the last state/status of a "tasks" array
-
-  const handleAddTask = () => {
-    if (newTask.trim() !== "") {
-      setTasks((prevTasks) => [
-        ...prevTasks,
-        { id: nextId, taskName: newTask, completed: false, isChanging: false },
-      ]);
-      setNextId((prevId) => prevId + 1);
-      setError("");
-    } else {
-      setError("Please enter proper task!");
-    }
-    setNewTask("");
-  };
-
-  // handle deleting by using filtering method, then set the "tasks" to the filtered one
-  const handleDelete = (id) => {
-    const updatedTask = tasks.filter((task) => task.id !== id);
-    setTasks(updatedTask);
-  };
-
-  // updating check box by inverting or setting the "completed:" property to the opposite value from the prev state
-  const handleCheckBox = (id) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
-  };
-
-  // updating taskname, the "isUpdating" variable is to determine whether we are updating or not, if so, we will display the input attribute that initially displaying "none", otherwise it will remain false to display at "none"
-  const handleUpdate = (id, name) => {
-    setIsUpdating(id === isUpdating ? null : id);
-    setNewUpdatedTask(name);
-  };
-
-  //handling confirm button. once the "Update" button is clicked when in updating status we will get the value of "newUpdatedTask" then assigning it as a new taskName for specific task.
-  const handleConfirmUpdate = (id) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, taskName: newUpdatedTask } : task
-      )
-    );
-    setIsUpdating(null);
-  };
-
-  // using .useEffect, for filtering the tasks. We will run the .useEffect when the state of "tasks" and "selectedFitler" changes. The function inside the .useEffect is that it filtered through each "task" of "tasks" array then identfying the status whether the "completed" property has a value of true or false, then filtering it and assigned the filtered value to the "updatedTask" which was initially an empty array then setting the "filteredTasks" based on the value of "updatedTask"
-
-  const [filteredTasks, setFilteredTasks] = useState([]);
 
   useEffect(() => {
     const filterTask = () => {
@@ -101,7 +56,7 @@ const Todolist = () => {
       setFilteredTasks(updatedTask);
     };
     filterTask();
-  }, [tasks, selectedFilter]);
+  }, [tasks, selectedFilter, setFilteredTasks]);
 
   return (
     <RootBox>
@@ -109,7 +64,6 @@ const Todolist = () => {
         <Typography variant="h4" sx={{ fontStyle: "italic" }}>
           Todo-List
         </Typography>
-
         <Stack
           direction={{ sm: "row", xs: "column" }}
           spacing={{ sm: 2, xs: 1 }}
@@ -148,11 +102,19 @@ const Todolist = () => {
               }}
               color="primary"
               variant="contained"
-              onClick={handleAddTask}
+              onClick={() =>
+                handleAddTask(
+                  newTask,
+                  setTasks,
+                  nextId,
+                  setNextId,
+                  setError,
+                  setNewTask
+                )
+              }
             >
               Add Task
             </Button>
-
             <Select
               sx={{
                 "& .MuiSelect-select": {
@@ -168,7 +130,6 @@ const Todolist = () => {
             </Select>
           </Stack>
         </Stack>
-
         <Stack>
           {filteredTasks.map((task) => (
             <Stack
@@ -191,13 +152,14 @@ const Todolist = () => {
                       margin: "0 0.5rem",
                     }}
                     type="checkbox"
-                    onChange={() => handleCheckBox(task.id)}
+                    onChange={() => handleCheckBox(task.id, setTasks)}
                     checked={task.completed}
                   />
-
                   <Typography
                     variant="h6"
-                    textDecoration={task.completed ? "line-through" : "none"}
+                    sx={{
+                      textDecoration: task.completed ? "line-through" : "none",
+                    }}
                   >
                     {task.taskName}
                   </Typography>
@@ -218,11 +180,10 @@ const Todolist = () => {
                     variant="outlined"
                     color="error"
                     startIcon={<DeleteIcon />}
-                    onClick={() => handleDelete(task.id)}
+                    onClick={() => handleDelete(task.id, tasks, setTasks)}
                   >
                     Delete
                   </Button>
-
                   <Button
                     size="small"
                     sx={{
@@ -233,13 +194,20 @@ const Todolist = () => {
                     variant="outlined"
                     color="success"
                     startIcon={<EditIcon />}
-                    onClick={() => handleUpdate(task.id, task.taskName)}
+                    onClick={() =>
+                      handleUpdate(
+                        task.id,
+                        task.taskName,
+                        isUpdating,
+                        setIsUpdating,
+                        setNewUpdatedTask
+                      )
+                    }
                   >
                     Update
                   </Button>
                 </Stack>
               </Stack>
-
               <Stack
                 padding="0.5rem"
                 direction={{
@@ -284,7 +252,14 @@ const Todolist = () => {
                     }}
                     variant="contained"
                     color="success"
-                    onClick={() => handleConfirmUpdate(task.id)}
+                    onClick={() =>
+                      handleConfirmUpdate(
+                        task.id,
+                        setTasks,
+                        setIsUpdating,
+                        newUpdatedTask
+                      )
+                    }
                   >
                     {" "}
                     Confirm
@@ -298,5 +273,4 @@ const Todolist = () => {
     </RootBox>
   );
 };
-
 export default Todolist;
