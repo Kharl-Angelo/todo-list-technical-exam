@@ -241,7 +241,6 @@ const Todolist = () => {
                     color="error"
                     onClick={() => setIsUpdating(null)}
                   >
-                    {" "}
                     Cancel
                   </Button>
                   <Button
@@ -261,7 +260,6 @@ const Todolist = () => {
                       )
                     }
                   >
-                    {" "}
                     Confirm
                   </Button>
                 </Stack>
